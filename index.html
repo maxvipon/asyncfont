@@ -1,0 +1,118 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Async Font Load Test</title>
+    <style>
+        body {
+            font: 1em/1.4 serif;
+            margin: 0;
+            padding: 20px;
+        }
+        h1 {
+            margin-top: 0;
+        }
+        #options {
+            font-family: Arial, Helvetica, sans-serif;
+            position: fixed;
+            right: 20px;
+            top: 20px;
+            text-align: right;
+        }
+        #options .btn {
+            margin-left: 15px;
+        }
+        #options input[type="checkbox"] {
+            margin-right: 7px;
+            position: relative;
+            top: -1px;
+        }
+        .btn {
+            font-family: inherit;
+            cursor: pointer;
+            outline: none;
+            font-size: inherit;
+            border: 1px solid #DD4814;
+            border-radius: 3px;
+            padding: 7px 10px;
+            margin: 0;
+            color: #DD4814;
+            background: #fff;
+            transition: all .25s ease-in-out;
+        }
+        .btn:hover {
+            box-shadow: 0 0 10px #fd0;
+        }
+        .btn:active {
+            background: #eee;
+            box-shadow: inset 0 2px 6px rgba(0,0,0,.2);
+        }
+    </style>
+    <script>
+        (function (d, s, l) {
+            var st, h = d.getElementsByTagName('head')[0];
+            if (typeof(s) === 'undefined' || !l.getItem('ubuntu')) {return;}
+            st = d.createElement('style');
+            st.innerHTML = l.getItem('ubuntu');
+            h.appendChild(st);
+        })(document, Storage, localStorage);
+    </script>
+</head>
+<body class="ubuntu">
+    <h1>Header</h1>
+    <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. A soluta enim dolorum pariatur quam in rem nesciunt. Accusamus nisi fugit magnam cupiditate nemo commodi beatae dolore dolores et expedita. Ipsa fuga beatae sed reprehenderit est at amet enim expedita voluptatibus sequi libero nam perferendis fugiat eligendi dolorum quod maxime vitae excepturi explicabo quam distinctio nesciunt incidunt blanditiis sint quidem. Quaerat unde asperiores dolore mollitia id rem exercitationem earum repellat obcaecati iste dolores dignissimos aspernatur doloribus velit dolorum repellendus est sint aliquam nihil voluptas delectus hic nostrum. Praesentium placeat facere alias quidem nemo esse et quaerat illo cupiditate id reprehenderit minima.</p>
+    <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Labore, magni eaque voluptatem accusantium cupiditate voluptatibus ullam soluta itaque ratione voluptatum.</p>
+    <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Tempore, debitis, voluptatibus iste dicta nam ratione sint adipisci error sit numquam nemo porro incidunt officiis voluptas enim laboriosam harum distinctio possimus qui hic totam dolor voluptate a sequi veritatis reiciendis repellat perferendis at iusto eligendi! Maiores, excepturi, ipsum, quisquam, perferendis at incidunt placeat mollitia praesentium debitis modi eligendi quae nostrum sapiente facilis assumenda ad provident necessitatibus fugiat dignissimos velit maxime veniam voluptas inventore quaerat suscipit recusandae sit facere asperiores quos pariatur.</p>
+    <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Obcaecati, sunt, beatae maxime saepe libero necessitatibus eveniet laboriosam nihil totam nisi cum minus porro velit incidunt magni alias ad nostrum modi sed esse qui. Amet, accusamus, est, quo temporibus veritatis reprehenderit minima neque molestiae odio adipisci dolor ducimus earum assumenda voluptatum maxime voluptate libero ex aliquam mollitia eligendi quae animi rerum atque cupiditate ab eos eaque sit qui alias velit? Excepturi doloribus minus ut. Tempora, id ipsum minus similique veniam suscipit vero nostrum! Atque, molestiae, reprehenderit, dicta in ullam harum deserunt cum ducimus ad numquam beatae totam quos pariatur autem eos asperiores necessitatibus tempora impedit odio ab. Numquam natus saepe sapiente veritatis alias reiciendis aspernatur sed dolorum culpa deserunt. Commodi, quod accusantium excepturi animi.</p>
+    <div id="options"></div>
+
+    <script src="//yandex.st/jquery/1.8.3/jquery.min.js"></script>
+    <script>
+        (function(d, s ,l){
+            if (typeof(s) !== 'undefined') {
+                var useFont = l.getItem('useFontAfterLoad'),
+                    $options = $('#options');
+
+                if (l.getItem('ubuntu') === null) {
+                    $.ajax({
+                        url: './ubuntu.css',
+                        success: function(response){
+                            l.setItem('ubuntu', response);
+
+                            if (useFont === 'true') {
+                                var st, h = d.getElementsByTagName('head')[0];
+                                if (typeof(s) === 'undefined' || !l.getItem('ubuntu')) {return;}
+                                st = d.createElement('style');
+                                st.innerHTML = l.getItem('ubuntu');
+                                h.appendChild(st);
+
+                                $options.append($('<button>', { id: 'reset', class: 'btn' }).text('Clear font cache'));
+                            } else {
+                                $options.append($('<button>', { id: 'reload', class: 'btn' }).text('Reload page'));
+                            }
+                        },
+                        dataType: 'text'
+                    });
+                } else {
+                    $options.append($('<button>', { id: 'reset', class: 'btn' }).text('Clear font cache'));
+                }
+
+                $('body')
+                    .on('click', '#reset', function(){
+                        l.removeItem('ubuntu');
+                        $(this).attr('id', 'reload').text('Reload page');
+
+                        $options.prepend($('<label>', { for: 'use' }).text('Use font immideatly after loading'));
+                        $options.prepend($('<input>', { id: 'use', type: 'checkbox', checked: useFont === 'true' }));
+                    })
+                    .on('click', '#reload', function(){
+                        location.reload();
+                    })
+                    .on('change', '#use', function(){
+                        l.setItem('useFontAfterLoad', $(this).is(':checked'));
+                    });
+            }
+        })(document, Storage, localStorage);
+    </script>
+</body>
+</html>
